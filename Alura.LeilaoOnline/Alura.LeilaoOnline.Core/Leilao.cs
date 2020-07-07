@@ -9,6 +9,8 @@ namespace Alura.LeilaoOnline.Core
         public IEnumerable<Lance> Lances => _lances;
         public string Peca { get; }
 
+        public Lance Gannhador { get; private set; }
+
         public Leilao(string peca)
         {
             Peca = peca;
@@ -27,7 +29,7 @@ namespace Alura.LeilaoOnline.Core
 
         public void TerminaPregao()
         {
-
+            Gannhador = Lances.Last();
         }
     }
 }
