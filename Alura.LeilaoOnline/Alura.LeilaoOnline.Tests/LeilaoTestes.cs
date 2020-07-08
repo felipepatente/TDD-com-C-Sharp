@@ -6,9 +6,24 @@ namespace Alura.LeilaoOnline.Tests
     public class LeilaoTestes
     {
         [Fact]
+        public void LeilaoSemLances()
+        {
+            //Arrange - cenário            
+            var leilao = new Leilao("Van Gogh");
+            
+            //Act - método sob teste
+            leilao.TerminaPregao();
+
+            //Assert            
+            var valorEsperado = 0;
+            var valorObtido = leilao.Gannhador.Valor;
+            Assert.Equal(valorEsperado, valorObtido);            
+        }
+
+        [Fact]
         public void LeilaoComTresClientes()
         {
-            //Arrange - cenário
+            //Arrange - cenário            
             var leilao = new Leilao("Van Gogh");
             var fulano = new Interessada("Fulano", leilao);
             var maria = new Interessada("Mariana", leilao);
@@ -23,7 +38,7 @@ namespace Alura.LeilaoOnline.Tests
             //Act - método sob teste
             leilao.TerminaPregao();
 
-            //Assert
+            //Assert            
             var valorEsperado = 1400;            
             var valorObtido = leilao.Gannhador.Valor;
             Assert.Equal(valorEsperado, valorObtido);
