@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
+using System;
 
 namespace Alura.LeilaoOnline.Core
 {
@@ -15,29 +15,33 @@ namespace Alura.LeilaoOnline.Core
     {
         private Interessada _ultimoCliente;
         private IList<Lance> _lances;
+        private IModalidadeAvaliacao _avaliador;
+
         public IEnumerable<Lance> Lances => _lances;
         public string Peca { get; }
-        public Lance Gannhador { get; private set; }
+        public Lance Ganhador { get; private set; }
         public EstadoLeilao Estado { get; private set; }
 
-        public Leilao(string peca)
+        public Leilao(string peca, IModalidadeAvaliacao avaliador)
         {
             Peca = peca;
             _lances = new List<Lance>();
             Estado = EstadoLeilao.LeilaoAntesDoPregao;
+            _avaliador = avaliador;
         }
 
         private bool NovoLanceEhAceito(Interessada cliente, double valor)
         {
-            return (Estado == EstadoLeilao.LeilaoEmAndamento) && (cliente != _ultimoCliente);
+            return (Estado == EstadoLeilao.LeilaoEmAndamento)
+                && (cliente != _ultimoCliente);
         }
 
         public void RecebeLance(Interessada cliente, double valor)
         {
             if (NovoLanceEhAceito(cliente, valor))
-            {                           
+            {
                 _lances.Add(new Lance(cliente, valor));
-                _ultimoCliente = cliente;                
+                _ultimoCliente = cliente;
             }
         }
 
@@ -50,14 +54,9 @@ namespace Alura.LeilaoOnline.Core
         {
             if (Estado != EstadoLeilao.LeilaoEmAndamento)
             {
-                throw new System.InvalidOperationException("Não é possível terminar o pregão sem que ele tenha começado. Para isso, Utilize o método IniciaPregao()");
+                throw new System.InvalidOperationException("Não é possível terminar o pregão sem que ele tenha começado. Para isso, utilize o método IniciaPregao().");
             }
-
-            Gannhador = Lances
-                .DefaultIfEmpty(new Lance(null, 0))
-                .OrderBy(l => l.Valor)
-                .LastOrDefault();
-
+            Ganhador = _avaliador.Avalia(this);
             Estado = EstadoLeilao.LeilaoFinalizado;
         }
     }
